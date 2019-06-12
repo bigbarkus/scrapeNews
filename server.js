@@ -1,22 +1,21 @@
-var express = require("express");
-var logger = require("morgan");
-var mongoose = require("mongoose");
+const express = require("express");
+const mongoose = require("mongoose");
+const axios = require("axios");
+const cheerio = require("cheerio");
 
-var axios = require("axios");
-var cheerio = require("cheerio");
+const db = require("./models");
 
-var db = require("./models");
+const PORT = 3000;
 
-var PORT = 3000;
+const app = express();
 
-var app = express();
-
-app.use(logger("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
-mongoose.connect("mongodb://localhost/unit18Populater", { useNewUrlParser: true });
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 app.get("/scrape", function(req, res) {
   axios.get("http://www.echojs.com/").then(function(response) {
