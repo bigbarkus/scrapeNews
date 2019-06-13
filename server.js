@@ -18,7 +18,7 @@ var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 app.get("/scrape", function(req, res) {
-  axios.get("http://www.wired.com/").then(function(response) {
+  axios.get("http://www.echojs.com/").then(function(response) {
     var $ = cheerio.load(response.data);
 
     $("article h2").each(function(i, element) {
@@ -57,8 +57,8 @@ app.get("/articles", function(req, res) {
 
 app.get("/articles/:id", function(req, res) {
   var id = req.params.id
-  db.Article.findOne({_id: id}).populate("notes").then(function(dbUser) {
-    res.json(dbUser);
+  db.Article.findOne({_id: id}).populate("note").then(function(dbArticle) {
+    res.json(dbArticle);
   }).catch(function(err) {
     res.json(err);
   })
@@ -66,10 +66,9 @@ app.get("/articles/:id", function(req, res) {
 });
 
 app.post("/articles/:id", function(req, res) {
-  var id = req.params.id
   db.Note.create(req.body)
   .then(function(dbNote) {
-    return db.Article.findOneAndUpdate({_id: mongojs.ObjectId(id)}, { $push: { notes: dbNote._id } }, { new: true });
+    return db.Article.findOneAndUpdate({_id: req.params.id}, { $push: { notes: dbNote._id } }, { new: true });
   })
   .then(function(dbArticle) {
     res.json(dbArticle);
