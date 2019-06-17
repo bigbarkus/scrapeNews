@@ -18,10 +18,10 @@ var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 app.get("/scrape", function(req, res) {
-  axios.get("http://www.echojs.com/").then(function(response) {
+  axios.get("http://www.sciencenews.org/").then(function(response) {
     var $ = cheerio.load(response.data);
 
-    $("article h2").each(function(i, element) {
+    $("article").each(function(i, element) {
       var result = {};
 
       result.title = $(this)
